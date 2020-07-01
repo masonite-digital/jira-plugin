@@ -181,7 +181,7 @@ public class ChangingWorkflowTest {
 
     @Test
 
-    public void addCommentsOnNonEmptyWorkflowAndNonEmptyComment() throws IOException, TimeoutException {
+    public void addCommentsOnNonEmptyWorkflowAndNonEmptyComment() throws IOException, TimeoutException, NoSuchFieldException {
         FieldSetter.setField(site, JiraSite.class.getDeclaredField("jiraSession"), mockSession);
         doReturn(Arrays.asList(mock(Issue.class))).when(mockSession).getIssuesFromJqlSearch(anyString());
         doReturn(Integer.valueOf(randomNumeric(5)))
@@ -215,55 +215,12 @@ public class ChangingWorkflowTest {
 
 
     @Test
-    public void dontAddCommentsOnNullWorkflowAndNullComment() throws IOException, TimeoutException {
-        doReturn(mockSession).when(site).getSession();
+    public void dontAddCommentsOnNullWorkflowAndNullComment() throws IOException, TimeoutException, NoSuchFieldException {
+        FieldSetter.setField(site, JiraSite.class.getDeclaredField("jiraSession"), mockSession);
         doReturn(Arrays.asList(mock(Issue.class))).when(mockSession).getIssuesFromJqlSearch(anyString());
         doCallRealMethod().when(site).progressMatchingIssues(anyString(), any(), any(), any(PrintStream.class));
 
         site.progressMatchingIssues(ISSUE_JQL, null, null, mock(PrintStream.class));
         verify(mockSession, never()).addComment(anyString(), anyString(), isNull(), isNull());
     }
-
-//    private void initEntryMock() {
-//        Issue mockIssue = mock(Issue.class);
-//        when(mockIssue.getKey()).thenReturn("ABC-1");
-//        when(mockSession.getIssue(anyString())).thenReturn(mockIssue);
-//
-////        JiraSite site = mock(JiraSite.class);
-////        when(site.getSession()).thenReturn(session);
-//        when(site.getIssuePattern()).thenReturn(Pattern.compile("(TR-[0-9]*)"));
-//
-//        mockRun = mock(AbstractBuild.class);
-////        mockTaskListener = mock(TaskListener.class);
-//
-//        when(mockTaskListener.getLogger()).thenReturn(System.out);
-//
-//        ChangeLogSet changeLogSet = mock(ChangeLogSet.class);
-//
-//        Set<? extends ChangeLogSet.Entry> entries = Sets.newHashSet(
-//                new MockEntry("Fixed JI123-4711"),
-//                new MockEntry("Fixed foo_bar-4710"),
-//                new MockEntry("Fixed FoO_bAr-4711"),
-//                new MockEntry("Fixed something.\nJFoO_bAr_MULTI-4718"),
-//                new MockEntry("TR-123: foo"),
-//                new MockEntry("[ABC-42] hallo"),
-//                new MockEntry("#123: this one must not match"),
-//                new MockEntry("ABC-: this one must also not match"),
-//                new MockEntry("ABC-: \n\nABC-127:\nthis one should match"),
-//                new MockEntry("ABC-: \n\nABC-128:\nthis one should match"),
-//                new MockEntry("ABC-: \n\nXYZ-10:\nXYZ-20 this one too"),
-//                new MockEntry("Fixed DOT-4."),
-//                new MockEntry("Fixed DOT-5. Did it right this time"));
-//
-//        when(changeLogSet.iterator()).thenReturn(entries.iterator());
-//
-//        when(mockRun.getChangeSet()).thenReturn(changeLogSet);
-//
-//        Job mockJob = mock(Job.class);
-//        when(mockRun.getParent()).thenReturn(mockJob);
-//
-//        JiraProjectProperty jiraProjectProperty = mock(JiraProjectProperty.class);
-//        when(jiraProjectProperty.getSite()).thenReturn(site);
-//        when(mockJob.getProperty(JiraProjectProperty.class)).thenReturn(jiraProjectProperty);
-//    }
 }

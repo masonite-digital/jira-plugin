@@ -1045,7 +1045,7 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
         boolean success = true;
         List<Issue> issues = this.jiraSession.getIssuesFromJqlSearch(jqlSearch);
 
-        return progressSelectedIssues(workflowActionName, comment, console, session, success, issues);
+        return progressSelectedIssues(workflowActionName, comment, console, jiraSession, success, issues);
     }
 
 
