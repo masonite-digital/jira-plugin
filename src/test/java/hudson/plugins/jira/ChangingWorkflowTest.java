@@ -180,7 +180,6 @@ public class ChangingWorkflowTest {
 
 
     @Test
-
     public void addCommentsOnNonEmptyWorkflowAndNonEmptyComment() throws IOException, TimeoutException, NoSuchFieldException {
         FieldSetter.setField(site, JiraSite.class.getDeclaredField("jiraSession"), mockSession);
         doReturn(Arrays.asList(mock(Issue.class))).when(mockSession).getIssuesFromJqlSearch(anyString());
