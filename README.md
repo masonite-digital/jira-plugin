@@ -8,13 +8,36 @@ Jenkins Jira Plugin
 
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/jira.svg?color=blue)](https://stats.jenkins.io/pluginversions/jira.html)
 [![Coverage](https://coveralls.io/repos/jenkinsci/jira-plugin/badge.svg?branch=master&service=github)](https://coveralls.io/github/jenkinsci/jira-plugin?branch=master)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jenkins-jira-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=jenkins-jira-plugin)
 [![Contributors](https://img.shields.io/github/contributors/jenkinsci/jira-plugin.svg)](https://github.com/jenkinsci/jira-plugin/graphs/contributors)
 
 
-#### About the plugin
+### About the plugin
 
 This plugin integrates with Jenkins the [Atlassian Jira Software](http://www.atlassian.com/software/jira/) (both Cloud and Server versions). For bug reports, see [bugs](https://issues.jenkins-ci.org/issues/?filter=14761) or [all open issues](https://issues.jenkins-ci.org/issues/?filter=14956). For documentation, see [official plugin site](https://plugins.jenkins.io/jira).
+
+
+#### Reporting Bugs
+
+Before reporting a new bug, check [currently open  issues in JIRA](https://issues.jenkins-ci.org/browse/JENKINS-64002?filter=14956).
+
+When creating a new issue, provide as much information as possible including:
+
+- steps to reproduce the issue and possible workarounds if known (Description field)
+
+- Jenkins and plugin versions (Environment field)
+
+  You can obtain the list using using [Jenkins Script console](https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+Script+Console) at `http://<jenkins-ip:8080>/script`:
+
+```groovy
+println("Jenkins:" + Jenkins.instance.getVersion())
+
+Jenkins.instance.pluginManager.plugins.each{
+  plugin ->
+    println ("${plugin.getDisplayName()} (${plugin.getShortName()}): ${plugin.getVersion()}")
+}
+```
+
+### Configuring the plugin
 
 
 #### Usage with Jira Cloud
@@ -133,18 +156,18 @@ execute its actions. You can do that via Jira Permission Helper tool.
 
 #### System properties
 
-| Property Name                                                   | Functionality Change                                                                                  |
-|-----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| **-Dhudson.plugins.jira.JiraMailAddressResolver.disabled=true** | Use to disable resolving user email from Jira usernames. Currently there is no option for this in UI. |
+| Property Name | Functionality Change |
+|---------------|----------------------|
+| `-Dhudson.plugins.jira.JiraMailAddressResolver.disabled=true` | Use to disable resolving user email from Jira usernames. Currently there is no option for this in UI. |
 
 #### Related Resources
 
 -   Check also the Marvelution [Jenkins Integration for Jira](https://www.marvelution.com/products/jenkins-integration-for-jira/) which provides a two-way solution (Jenkins-\>Jira and Jira-\>Jenkins)
 -   For Jira Workflow (Pipeline) plugin compatibility see [COMPATIBILITY.md](COMPATIBILITY.md)
 
-### Common issues
+#### Common issues
 
-#### Jenkins<>Jira SSL connectivity problems
+##### Jenkins<>Jira SSL connectivity problems
 
 If you encounter stacktraces like this:
 ```
@@ -152,9 +175,7 @@ Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.Validator
 ```
 
 make sure the JRE/JDK that Jenkins master is running (or the Jenkins slaves are running) contain the valid CA chain certificates that Jira is running with.
-You can test it using this [SSLPoke.java class](https://gist.github.com/warden/e4ef13ea60f24d458405613be4ddbc51)
-
-like this:
+You can test it using this [SSLPoke.java class](https://gist.github.com/warden/e4ef13ea60f24d458405613be4ddbc51):
 ```
 $ wget -O SSLPoke.java https://gist.githubusercontent.com/warden/e4ef13ea60f24d458405613be4ddbc51/raw/7f258a30be4ddea7b67239b40ae305f6a2e98e0a/SSLPoke.java
 
@@ -181,10 +202,10 @@ Before submitting your change please note that:
 
 #### Testing your changes
 
-There have been many developers involved in the development of this plugin and there are many downstream users who depend on it. 
+There have been many developers involved in the development of this plugin and there are many downstream users who depend on it.
 Tests help us assure that we're delivering a reliable plugin and that we've communicated our intent to other developers in a way that they can detect when they run tests.
 
-Each change should be covered by appropriate unit tests. 
+Each change should be covered by appropriate unit tests.
 In case it is not testable via a unit test, it should be tested against a real Jira instance - possibly both Jira Server and Jira Cloud.
 
 There is a [Jira Cloud test instance](https://jenkins-jira-plugin.atlassian.net/) that we are using for testing the plugin releases - let us know in the Pull Request in case you need access for testing.
@@ -208,12 +229,23 @@ Currently the formatting is not automatically checked during the build. However,
 improve the quality of the code,  maintainers might ask for proper formatting during the review
 process, so it is better to have it in place sooner than later.
 
-#### Building plugin with Docker
+#### Docker
 
-Build the plugin locally using Docker and Maven image version 3.3 & newest JDK 8:
+##### Start dockerized Jenkins (for testing)
+
+The command below will start a local Jenkins using the version specificied as first argument (or lts):
 
 ```bash
-$ docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2:/usr/src/mymaven/.m2" -w /usr/src/mymaven maven:3.3-jdk-8 mvn clean package
+$ ./examples/start_docker.sh 2.249.2
+```
+
+##### Build the plugin in Docker environment
+
+The command below allows to build the plugin using maven docker image. This is useful to test building against different Maven/JDK versions.
+See also [SDKMan](https://sdkman.io/) for a different approach.
+
+```bash
+$ docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2:/root/.m2" -w /usr/src/mymaven maven:3.3-jdk-8 mvn clean package
 ```
 
 #### Atlassian sources import
@@ -225,9 +257,10 @@ The downloaded sources didn't have any license headers but based on the [pom](ht
 sources are Apache License (see pom in src/main/resources/atlassian-httpclient-plugin-0.23.0.pom)   
 
 
-### For maintainers
+### Maintainers Section
 
 #### Releasing the plugin
 
 - we use the [Release Drafter](https://github.com/toolmantim/release-drafter) extension to perform releases, make sure that the PRs are [properly labelled](https://github.com/jenkinsci/.github/blob/master/.github/release-drafter.yml)
 - there is a [Jira Cloud](https://jenkins-jira-plugin.atlassian.net/) test instance that the changes can be tested against, official maintainers are admins that can grant access for testing to PR submitters on a need-to-have basis
+- make sure you have `~/.m2/settings.xml` configured - refer to [releasing Jenkins plugins](https://www.jenkins.io/doc/developer/publishing/releasing/)

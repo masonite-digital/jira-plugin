@@ -1099,10 +1099,6 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
         for (Issue issue : issues) {
             String issueKey = issue.getKey();
 
-//             if (isNotEmpty(comment)) {
-//                 this.jiraSession.addComment(issueKey, comment, null, null);
-//             }
-
             if (isEmpty(workflowActionName)) {
                 continue;
             }
