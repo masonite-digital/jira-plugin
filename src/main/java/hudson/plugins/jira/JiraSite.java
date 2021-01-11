@@ -1090,29 +1090,45 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
         return progressSelectedIssues(workflowActionName, comment, console, session, success, issues);
     }
 
-    private boolean progressSelectedIssues(String workflowActionName, String comment, PrintStream console, JiraSession session, boolean success, List<Issue> issues) {
-        if (isEmpty(workflowActionName)) {
+    private boolean progressSelectedIssues(String workflowActionNames, String comment, PrintStream console, JiraSession session, boolean success, List<Issue> issues) {
+        String[] workflowActionNameList = new String[0];
+        if (isEmpty(workflowActionNames)) {
             console.println("[Jira] No workflow action was specified, " +
                     "thus no status update will be made for any of the matching issues.");
+        } else {
+            workflowActionNameList = workflowActionNames.split("|");
         }
+
+        Integer actionId;
+        String workflowAction;
 
         for (Issue issue : issues) {
             String issueKey = issue.getKey();
 
-            if (isEmpty(workflowActionName)) {
-                continue;
-            }
+            actionId = null;
+            workflowAction = "N/A";
 
-            Integer actionId = this.jiraSession.getActionIdForIssue(issueKey, workflowActionName);
+            for(String workflowActionName: workflowActionNameList) {
+                if (isEmpty(workflowActionName)) {
+                    continue;
+                }
+
+                actionId = this.jiraSession.getActionIdForIssue(issueKey, workflowActionName);
+
+                if(actionId != null) {
+                    workflowAction = workflowActionName.trim();
+                    break;
+                }
+            }
 
             if (actionId == null) {
                 LOGGER.fine(String.format("Invalid workflow action %s for issue %s; issue status = %s",
-                        workflowActionName, issueKey, issue.getStatus()));
-                console.println(Messages.JiraIssueUpdateBuilder_UnknownWorkflowAction(issueKey, workflowActionName));
+                        workflowActionNames, issueKey, issue.getStatus()));
+                console.println(Messages.JiraIssueUpdateBuilder_UnknownWorkflowAction(issueKey, workflowActionNames));
                 success = false;
                 continue;
             } else {
-                console.println(String.format("[%s]: Found action id %s for workflow action '%s'", issueKey, actionId, workflowActionName));
+                console.println(String.format("[%s]: Found action id %s for workflow action '%s'", issueKey, actionId, workflowAction));
             }
 
             String newStatus = this.jiraSession.progressWorkflowAction(issueKey, actionId);

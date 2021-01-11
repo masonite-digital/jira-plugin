@@ -104,27 +104,6 @@ public class ChangingWorkflowTest {
     }
 
 
-//    @Test
-
-//    public void addCommentsOnNonEmptyWorkflowAndNonEmptyComment() throws IOException, TimeoutException, NoSuchFieldException {
-//        FieldSetter.setField(site, JiraSite.class.getDeclaredField("jiraSession"), mockSession);
-//
-//        doReturn(Arrays.asList(mock(Issue.class))).when(mockSession).getIssuesFromJqlSearch(anyString());
-//        doReturn(Integer.valueOf(randomNumeric(5)))
-//            .when(mockSession)
-//            .getActionIdForIssue(any(),eq(NON_EMPTY_WORKFLOW_LOWERCASE));
-
-//        doCallRealMethod().when(site)
-//            .progressMatchingIssues(anyString(), any(), anyString(), any(PrintStream.class));
-//
-//        site.progressMatchingIssues(ISSUE_JQL,
-//                NON_EMPTY_WORKFLOW_LOWERCASE, NON_EMPTY_COMMENT, mock(PrintStream.class));
-//
-//        verify(mockSession, times(1)).addComment(any(), eq(NON_EMPTY_COMMENT),
-//                isNull(), isNull());
-//        verify(mockSession, times(1)).progressWorkflowAction(any(), anyInt());
-//    }
-
     @Test
     public void addCommentsOnNonEmptyWorkflowAndNonEmptyComment() throws Exception {
         Whitebox.setInternalState(site,"jiraSession", mockSession);
