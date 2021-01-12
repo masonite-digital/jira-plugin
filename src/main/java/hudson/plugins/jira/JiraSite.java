@@ -1096,7 +1096,7 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
             console.println("[Jira] No workflow action was specified, " +
                     "thus no status update will be made for any of the matching issues.");
         } else {
-            workflowActionNameList = workflowActionNames.split("|");
+            workflowActionNameList = workflowActionNames.split("\\|");
         }
 
         Integer actionId;
@@ -1109,14 +1109,15 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
             workflowAction = "N/A";
 
             for(String workflowActionName: workflowActionNameList) {
-                if (isEmpty(workflowActionName)) {
+                workflowAction = workflowActionName.trim();
+
+                if (isEmpty(workflowAction)) {
                     continue;
                 }
 
-                actionId = this.jiraSession.getActionIdForIssue(issueKey, workflowActionName);
+                actionId = this.jiraSession.getActionIdForIssue(issueKey, workflowAction);
 
                 if(actionId != null) {
-                    workflowAction = workflowActionName.trim();
                     break;
                 }
             }

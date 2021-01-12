@@ -128,6 +128,34 @@ public class ChangingWorkflowTest {
     }
 
     @Test
+    public void addCommentsOnTwoWorkflowActionsAndNonEmptyComment() throws Exception {
+        Whitebox.setInternalState(site,"jiraSession", mockSession);
+
+        Issue mockIssue = mock(Issue.class);
+        when(mockSession.getIssuesFromJqlSearch(anyString()))
+                .thenReturn(Arrays.asList(mockIssue));
+        doReturn("issueKey").when(mockIssue).getKey();
+
+        doReturn(null).when(mockSession)
+                .getActionIdForIssue(anyString(), eq("action1"));
+        doReturn(Integer.valueOf(randomNumeric(5))).when(mockSession)
+                .getActionIdForIssue(anyString(), eq("action2"));
+
+        when(site.progressMatchingIssues(anyString(), any(), anyString(), any(PrintStream.class)))
+                .thenCallRealMethod();
+        PowerMockito.doCallRealMethod()
+                .when(site,"progressSelectedIssues", anyString(), anyString(), any(), any(), anyBoolean(), any());
+
+        site.progressMatchingIssues(ISSUE_JQL,
+                "action1 | action2", NON_EMPTY_COMMENT, mock(PrintStream.class));
+
+        verify(mockSession, times(2)).getActionIdForIssue(anyString(), anyString());
+        verify(mockSession, times(1)).addComment(any(), eq(NON_EMPTY_COMMENT),
+                isNull(), isNull());
+        verify(mockSession, times(1)).progressWorkflowAction(any(), anyInt());
+    }
+
+    @Test
     public void addCommentsOnNullWorkflowAndNonEmptyComment() throws Exception {
         Whitebox.setInternalState(site,"jiraSession", mockSession);
         when(mockSession.getIssuesFromJqlSearch(anyString()))
