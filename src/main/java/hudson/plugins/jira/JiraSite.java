@@ -1126,7 +1126,6 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
                 LOGGER.fine(String.format("Invalid workflow action %s for issue %s; issue status = %s",
                         workflowActionNames, issueKey, issue.getStatus()));
                 console.println(Messages.JiraIssueUpdateBuilder_UnknownWorkflowAction(issueKey, workflowActionNames));
-                success = false;
                 continue;
             } else {
                 console.println(String.format("[%s]: Found action id %s for workflow action '%s'", issueKey, actionId, workflowAction));
